@@ -6,5 +6,49 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+Step: Library packages
+```{r}
+library(renv)
+library(dplyr)
+library(shiny)
+library(shinydashboard)
+library(shinydashboardPlus)
+library(tidyverse)
+library(glue)
+library(plotly)
+library(devtools)
+library(shinyWidgets)
+library(fontawesome)
+library(formattable)
+library(janitor)
+library(tsibble)
+library(DT)
+library(readr)
+library(lubridate)
+library(tidymodels)
+library(vip)
+library(ggrepel)
+```
+
+
+
+Step: Generate chatter data
+Chatter mean 
+Account name (Big ten names)
+Time
+```{r}
+chatter_low = seq(from = -.5, to = -.2, by = .01)
+chatter_medium = seq(from = -.2, to = .2, by = .01)
+chatter_high = seq(from = .2, to = .5, by = .01)
+
+account_names = c("Indiana", "Purdue", "Northwestern", "Illinois", "Penn State", "Ohio State", "Nebraska", "Michigan State", "Michigan", "Rutgers", "Maryland", "Minnesota", "Iowa", "Wisconsin")
+
+year_quarter = data.frame(year_quarter = seq(as.Date("2020/1/1"), as.Date("2022/1/1"), "months")) %>%
+  mutate(year_quarter = ymd(year_quarter)) %>%
+  mutate(year_quarter = tsibble::yearquarter(year_quarter))
+
+year_quarter
+
+```
 
 
