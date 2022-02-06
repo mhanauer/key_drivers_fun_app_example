@@ -45,9 +45,10 @@ account_names = c("Indiana", "Purdue", "Northwestern", "Illinois", "Penn State",
 
 year_quarter = data.frame(year_quarter = seq(as.Date("2020/1/1"), as.Date("2022/1/1"), "months")) %>%
   mutate(year_quarter = ymd(year_quarter)) %>%
-  mutate(year_quarter = tsibble::yearquarter(year_quarter))
+  mutate(year_quarter = tsibble::yearquarter(year_quarter)) %>%
+  dplyr::distinct(year_quarter) 
 
-year_quarter
+rep(year_quarter$year_quarter, times = 14)
 
 ```
 
