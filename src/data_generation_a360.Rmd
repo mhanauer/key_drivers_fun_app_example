@@ -62,8 +62,31 @@ Steps: Data generation for key drivers
 nps_low = c(4:10)
 nps_medium = c(7:10)
 nps_high = c(8:10)
-sampling_rate = 50
+sampling_rate = 126/3
 data_nps = c(sample(nps_low, size = sampling_rate, replace = TRUE), sample(nps_medium, size = sampling_rate, replace = TRUE), sample(nps_high, size = sampling_rate, replace = TRUE))
+data_nps
+
+driver_low = c(1:5)
+driver_high = c(3:5)
+
+#useful, usable, desireable, findable, credible, valuable
+sampling_rate_driver = 126
+
+driver_function = function(data){
+  x = sample(data, size = sampling_rate_driver, replace = TRUE)
+}
+
+useful = driver_function(data = driver_high)
+useable = driver_function(data = driver_low)
+desireable = driver_function(data = driver_high)
+findable = driver_function(data = driver_low)
+credible = driver_function(data = driver_high)
+valuable = driver_function(data = driver_low)
+
+
+
+nps_data = data.frame(year_quarter, account_names, data_nps)
+
 ```
 
 
