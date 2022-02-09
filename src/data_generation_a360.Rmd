@@ -29,9 +29,6 @@ library(tidymodels)
 library(vip)
 library(ggrepel)
 ```
-
-
-
 Step: Generate chatter data
 Chatter mean 
 Account name (Big ten names)
@@ -40,16 +37,33 @@ Time
 chatter_low = seq(from = -.5, to = -.2, by = .01)
 chatter_medium = seq(from = -.2, to = .2, by = .01)
 chatter_high = seq(from = .2, to = .5, by = .01)
+sample_rate = 126/3
 
-account_names = c("Indiana", "Purdue", "Northwestern", "Illinois", "Penn State", "Ohio State", "Nebraska", "Michigan State", "Michigan", "Rutgers", "Maryland", "Minnesota", "Iowa", "Wisconsin")
+chatter_data = c(sample(chatter_low, sample_rate, replace = TRUE), sample(chatter_medium, sample_rate, replace = TRUE), sample(chatter_high, sample_rate, replace = TRUE))
+
+account_names = c("Indiana", "Purdue", "Northwestern", "Illinois", "Penn State", "Ohio State", "Nebraska", "Michigan State", "Michigan", "Rutgers", "Maryland", "Minnesota", "Iowa", "Wisconsin") 
+
+account_names = rep(account_names, each = 9)
 
 year_quarter = data.frame(year_quarter = seq(as.Date("2020/1/1"), as.Date("2022/1/1"), "months")) %>%
   mutate(year_quarter = ymd(year_quarter)) %>%
   mutate(year_quarter = tsibble::yearquarter(year_quarter)) %>%
   dplyr::distinct(year_quarter) 
 
-rep(year_quarter$year_quarter, times = 14)
+year_quarter = rep(year_quarter$year_quarter, times = 14)
 
+account_year = data.frame(account_names = account_names, year_quarter = year_quarter)
+
+chatter_data = data.frame(account_year, chatter_data = chatter_data)
+chatter_data
+```
+Steps: Data generation for key drivers
+```{r}
+nps_low = c(4:10)
+nps_medium = c(7:10)
+nps_high = c(8:10)
+sampling_rate = 50
+data_nps = c(sample(nps_low, size = sampling_rate, replace = TRUE), sample(nps_medium, size = sampling_rate, replace = TRUE), sample(nps_high, size = sampling_rate, replace = TRUE))
 ```
 
 
