@@ -64,7 +64,7 @@ nps_medium = c(7:10)
 nps_high = c(8:10)
 sampling_rate = 126/3
 data_nps = c(sample(nps_low, size = sampling_rate, replace = TRUE), sample(nps_medium, size = sampling_rate, replace = TRUE), sample(nps_high, size = sampling_rate, replace = TRUE))
-data_nps
+
 
 driver_low = c(1:5)
 driver_high = c(3:5)
@@ -85,8 +85,9 @@ valuable = driver_function(data = driver_low)
 
 
 
-nps_data = data.frame(year_quarter, account_names, data_nps)
+nps_data = data.frame(year_quarter, account_names, data_nps, useful, useable, desireable, findable, credible, valuable)
 
+nps_data
 ```
 
 
