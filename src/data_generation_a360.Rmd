@@ -68,8 +68,6 @@ valuable = driver_function(data = driver_low)
 
 
 nps_data = data.frame(year_quarter, account_names, data_nps, useful, useable, desireable, findable, credible, valuable)
-
-nps_data
 ```
 
 

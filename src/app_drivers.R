@@ -3,7 +3,8 @@ pacman::p_load(renv, dplyr, shiny, shinydashboard, shinydashboardPlus, tidyverse
 
 setwd("~/shiny_360_app_example/src")
 source(knitr::purl("data_generation_a360.rmd", quiet = TRUE))
-
+nps_data = nps_data %>%
+  mutate(year_quarter = as.character(year_quarter))
 
 ui <- dashboardPage(
   dashboardHeader(title = "Demo Key Drivers and KPI Dashboard"),
@@ -35,11 +36,17 @@ ui <- dashboardPage(
               select = unique(nps_data$year_quarter)
             )
           )
+        ), 
+        fluidRow(box(
+          plotOutput("key_drivers")
+          )
         )
       )
     )
   )
 )
-server <- function(input, output) { }
+server <- function(input, output) {
+
+}
 
 shinyApp(ui, server)

@@ -1,13 +1,13 @@
-## ----setup, include=FALSE------------------------------------------------------------------------------------------
+## ----setup, include=FALSE--------------------------------------------------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 
 
-## ------------------------------------------------------------------------------------------------------------------
+## --------------------------------------------------------------------------------------------------------------------------
 library(pacman)
 pacman::p_load(renv, dplyr, shiny, shinydashboard, shinydashboardPlus, tidyverse, glue, plotly, devtools, shinyWidgets, fontawesome, formattable, janitor, tsibble, DT, readr, lubridate, tidymodels, ggrepel)
 
 
-## ------------------------------------------------------------------------------------------------------------------
+## --------------------------------------------------------------------------------------------------------------------------
 chatter_low = seq(from = -.5, to = -.2, by = .01)
 chatter_medium = seq(from = -.2, to = .2, by = .01)
 chatter_high = seq(from = .2, to = .5, by = .01)
@@ -32,7 +32,7 @@ chatter_data = data.frame(account_year, chatter_data = chatter_data)
 chatter_data
 
 
-## ------------------------------------------------------------------------------------------------------------------
+## --------------------------------------------------------------------------------------------------------------------------
 nps_low = c(4:10)
 nps_medium = c(7:10)
 nps_high = c(8:10)
@@ -60,6 +60,4 @@ valuable = driver_function(data = driver_low)
 
 
 nps_data = data.frame(year_quarter, account_names, data_nps, useful, useable, desireable, findable, credible, valuable)
-
-nps_data
 
