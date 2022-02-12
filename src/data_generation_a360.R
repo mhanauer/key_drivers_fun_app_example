@@ -1,21 +1,13 @@
----
-title: "data_generation_a360"
-output: html_document
----
-
-```{r setup, include=FALSE}
+## ----setup, include=FALSE------------------------------------------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
-```
-Step: Library packages
-```{r}
+
+
+## ------------------------------------------------------------------------------------------------------------------
 library(pacman)
 pacman::p_load(renv, dplyr, shiny, shinydashboard, shinydashboardPlus, tidyverse, glue, plotly, devtools, shinyWidgets, fontawesome, formattable, janitor, tsibble, DT, readr, lubridate, tidymodels, ggrepel)
-```
-Step: Generate chatter data
-Chatter mean 
-Account name (Big ten names)
-Time
-```{r}
+
+
+## ------------------------------------------------------------------------------------------------------------------
 chatter_low = seq(from = -.5, to = -.2, by = .01)
 chatter_medium = seq(from = -.2, to = .2, by = .01)
 chatter_high = seq(from = .2, to = .5, by = .01)
@@ -38,9 +30,9 @@ account_year = data.frame(account_names = account_names, year_quarter = year_qua
 
 chatter_data = data.frame(account_year, chatter_data = chatter_data)
 chatter_data
-```
-Steps: Data generation for key drivers
-```{r}
+
+
+## ------------------------------------------------------------------------------------------------------------------
 nps_low = c(4:10)
 nps_medium = c(7:10)
 nps_high = c(8:10)
@@ -70,6 +62,4 @@ valuable = driver_function(data = driver_low)
 nps_data = data.frame(year_quarter, account_names, data_nps, useful, useable, desireable, findable, credible, valuable)
 
 nps_data
-```
-
 
