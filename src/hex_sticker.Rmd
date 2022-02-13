@@ -1,0 +1,16 @@
+---
+title: "hex_sticker"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Step: Cooker hex 
+```{r}
+library(pacman)
+pacman::p_load(hexSticker, dplyr, magick, rsvg)
+
+
+```
+
