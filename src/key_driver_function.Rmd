@@ -59,7 +59,7 @@ nps <- quo(outcome)
 data_out = data %>%
     rename(nps = UQ(nps))
   
- driver_recipe <- recipe(nps ~ ., data = data) %>% 
+ driver_recipe <- recipe(nps ~ ., data = data_out) %>% 
       ## Can help make the distribution more symmetric                     
       step_YeoJohnson(all_numeric(), -all_outcomes()) %>% 
       ### Create z-scores for data to reduce collinearity
@@ -88,7 +88,31 @@ driver_fit_import = driver_fit_import %>%
       clean_names() %>% 
       mutate(importance = round(importance, 2))
 
-return(driver_fit_import)
+ likert_out =  data_out %>%
+      select(-c(nps)) %>%
+      t() %>%
+      data.frame() %>%
+      mutate(one = rowSums(. == "1")) %>% 
+      mutate(two = rowSums(. == "2")) %>% 
+      mutate(three = rowSums(. == "3")) %>%
+      mutate(four = rowSums(. == "4")) %>%
+      mutate(five = rowSums(. == "5")) %>%
+      select(one:five) %>%
+      mutate_all(funs(./dim(data_out)[1])) %>%
+      mutate_all(funs(formattable::percent(., digits = 0))) %>%
+      mutate(positive = four+five) %>%
+      select(positive) %>%
+      add_rownames("variable")
+
+key_drivers_data = driver_fit_import %>%
+      select(-c(sign)) %>%
+      left_join(likert_out %>% select(variable, positive), by  = "variable")
+     
+key_drivers_data <- key_drivers_data %>%
+      mutate(color = if_else(positive < mean(positive) & importance > mean(importance), "red", if_else(positive > mean(positive) & importance > mean(importance), "blue", "grey"))) 
+    ### Rename the variables 
+
+return(key_drivers_data)
 
 }
 
@@ -97,36 +121,7 @@ return(driver_fit_import)
 Step: Test out the function
 ```{r}
 
-nps_data_driver = nps_data %>%
-  select(-c(year_quarter:account_names))
-
-
-key_driver_function = function(data, outcome){
-  
-test <- quo(outcome)
-  data_out = data %>%
-    rename(test = UQ(test))
-  return(data_out)
-}
-
-
 key_driver_function(data = nps_data_driver, outcome = "nps")
-
-```
-Step
-```{r}
-df <- data.frame( 
-      color = c("blue", "black", "blue", "blue", "black"), 
-      value = 1:5)
-
-test_fun = function(data, var) {
-  color <- quo(var)
-  data_out = data %>%
-    rename(right = UQ(color))
-  return(data_out)
-}
-
-test_fun(df, var = "color")
 
 ```
 
