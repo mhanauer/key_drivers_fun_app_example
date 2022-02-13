@@ -40,9 +40,8 @@ ui <- dashboardPage(
             )
           )
         ), 
-        fluidRow(box(
+        fluidRow(
           plotOutput("key_drivers")
-          )
         )
       )
     )
@@ -50,8 +49,15 @@ ui <- dashboardPage(
 )
 server <- function(input, output) {
 output$key_drivers  = renderPlot({
+  
+nps_data = nps_data %>%
+  filter(account_names %in% input$account_names) %>%
+  filter(year_quarter %in% input$year_quarter) %>%
+  select(-c(account_names, year_quarter))
+  
+key_drivers_data = key_driver_function(data = nps_data, outcome = "nps")
 
-x_max = max(key_drivers_data$importance)
+x_max = max(nps_data$importance)
 x_min = min(key_drivers_data$importance)
 y_max = max(key_drivers_data$positive)
 y_min = min(key_drivers_data$positive)
