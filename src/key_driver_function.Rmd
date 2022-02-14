@@ -93,7 +93,10 @@ key_driver_function(data = nps_data_driver, outcome = "nps")
 ```
 Step: Graph function for key drivers
 ```{r}
-key_drivers_data = key_driver_function(data = nps_data_driver, outcome = "nps")
+
+key_drivers_graph_function = function(data){
+  
+
 
 max_min_change = .3
 y_adjustment = .1
@@ -104,7 +107,7 @@ y_max = max(key_drivers_data$positive) +  max(key_drivers_data$positive)*max_min
 y_min = min(key_drivers_data$positive) - min(key_drivers_data$positive)*max_min_change
 
 
-title = paste0("Key drivers", " ", "N = ", " ", dim(key_drivers_data)[1])
+title = paste0("Key drivers")
 
 kd <- ggplot(key_drivers_data,aes(importance, positive, label = variable))+
   geom_point()+
@@ -117,14 +120,6 @@ kd <- ggplot(key_drivers_data,aes(importance, positive, label = variable))+
   geom_vline(xintercept=median(key_drivers_data$importance)) +
   labs(x = "Importance", y =  "Favorable") +
   ggtitle(title) +
-  annotate(geom="text", x = x_max, y= y_max - y_max*y_adjustment, label="Strength",
-           color="#00B0F0") +
-  annotate(geom="text", x = x_min , y = y_max-y_max*y_adjustment, label="Unimportant",
-           color="#808080") +
-  annotate(geom="text",  x=  x_max, y = y_min+y_min*y_adjustment, label="Improvement",
-           color="#FF0000") +
-  annotate(geom="text", x =  x_min, y= y_min+y_min*y_adjustment, label= "Unimportant",
-           color="#808080") + 
   geom_text_repel(data = key_drivers_data %>% filter(color == "red"), aes(label = variable),
                   size = 3.5,  color = "#FF0000") +
   geom_text_repel(data = key_drivers_data %>% filter(color == "blue"), aes(label = variable),
@@ -132,8 +127,15 @@ kd <- ggplot(key_drivers_data,aes(importance, positive, label = variable))+
   geom_text_repel(data = key_drivers_data %>% filter(color == "grey"), aes(label = variable),
                   size = 3.5,  color = "#808080") +
   coord_flip()
-kd
+return(kd)
+}
 
+```
+Step: Use both functions
+```{r}
+key_drivers_data = key_driver_function(data = nps_data_driver, outcome = "nps")
+
+key_drivers_graph_function(key_drivers_data)
 
 ```
 
