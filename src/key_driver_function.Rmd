@@ -12,8 +12,8 @@ library(pacman)
 renv::restore()
 pacman::p_load(renv, dplyr, shiny, shinydashboard, shinydashboardPlus, tidyverse, glue, plotly, devtools, shinyWidgets, fontawesome, formattable, janitor, tsibble, DT, readr, lubridate, tidymodels, ggrepel, vip)
 
-setwd("~/shiny_360_app_example/src")
-source(knitr::purl(glue("~/shiny_360_app_example/src/data_generation_a360.Rmd")))
+setwd("/data/data_for_analysis/matthew.hanauer/shiny_360_app_example/src")
+source(knitr::purl(glue("/data/data_for_analysis/matthew.hanauer/shiny_360_app_example/src/data_generation_a360.Rmd")))
 
 nps_data
 ```
@@ -21,12 +21,10 @@ Step: Setup the function
 ```{r}
 key_driver_function = function(data, outcome){
   
-nps <- quo(outcome)
-
 data_out = data %>%
-    rename(nps = UQ(nps))
+    rename(outcome = outcome)
   
- driver_recipe <- recipe(nps ~ ., data = data_out) %>% 
+ driver_recipe <- recipe(outcome ~ ., data = data_out) %>% 
       ## Can help make the distribution more symmetric                     
       step_YeoJohnson(all_numeric(), -all_outcomes()) %>% 
       ### Create z-scores for data to reduce collinearity
@@ -44,10 +42,10 @@ driver_model <- linear_reg() %>%
     
 driver_data_baked <- driver_recipe %>% 
       prep() %>% 
-      bake(new_data = data)
+      bake(new_data = data_out)
 
 driver_final_fit <- driver_model %>% 
-      fit(nps ~ ., data = driver_data_baked)
+      fit(outcome ~ ., data = driver_data_baked)
 
 driver_fit_import = vi_model(driver_final_fit)
 
@@ -56,7 +54,7 @@ driver_fit_import = driver_fit_import %>%
       mutate(importance = round(importance, 2))
 
  likert_out =  data_out %>%
-      select(-c(nps)) %>%
+      select(-c(outcome)) %>%
       t() %>%
       data.frame() %>%
       mutate(one = rowSums(. == "1")) %>% 
