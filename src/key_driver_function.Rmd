@@ -9,10 +9,11 @@ knitr::opts_chunk$set(echo = TRUE)
 Step: Library packages and load data
 ```{r}
 library(pacman)
+renv::restore()
 pacman::p_load(renv, dplyr, shiny, shinydashboard, shinydashboardPlus, tidyverse, glue, plotly, devtools, shinyWidgets, fontawesome, formattable, janitor, tsibble, DT, readr, lubridate, tidymodels, ggrepel, vip)
 
-setwd("/data/data_for_analysis/matthew.hanauer/shiny_360_app_example/src")
-source(knitr::purl(glue("/data/data_for_analysis/matthew.hanauer/shiny_360_app_example/src/data_generation_a360.Rmd")))
+setwd("~/shiny_360_app_example/src")
+source(knitr::purl(glue("~/shiny_360_app_example/src/data_generation_a360.Rmd")))
 
 nps_data
 ```
