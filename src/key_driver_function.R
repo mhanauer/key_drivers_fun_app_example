@@ -1,17 +1,17 @@
-## ----setup, include=FALSE------------------------------------------------------------------------------
+## ----setup, include=FALSE--------------------------------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 
 
-## ------------------------------------------------------------------------------------------------------
+## --------------------------------------------------------------------------------------------------------
 library(pacman)
 pacman::p_load(renv, dplyr, shiny, shinydashboard, shinydashboardPlus, tidyverse, glue, plotly, devtools, shinyWidgets, fontawesome, formattable, janitor, tsibble, DT, readr, lubridate, tidymodels, ggrepel, vip, rwa)
 
-setwd("~/shiny_360_app_example/src")
-source(knitr::purl(glue("~/shiny_360_app_example/src/data_generation_a360.Rmd")))
+setwd("~/key_driver_fun_app_example/src")
+source(knitr::purl(glue("~/key_driver_fun_app_example/src/data_generation_a360.Rmd")))
 nps_data
 
 
-## ------------------------------------------------------------------------------------------------------
+## --------------------------------------------------------------------------------------------------------
 key_driver_function = function(data, outcome){
   
 data_out = data %>%
@@ -77,14 +77,14 @@ return(key_drivers_data)
 
 
 
-## ------------------------------------------------------------------------------------------------------
+## --------------------------------------------------------------------------------------------------------
 nps_data_driver = nps_data %>%
   select(-c(year_quarter, account_names))
 
 key_driver_function(data = nps_data_driver, outcome = "nps")
 
 
-## ------------------------------------------------------------------------------------------------------
+## --------------------------------------------------------------------------------------------------------
 
 viz_key_driver_function = function(data){
 
@@ -128,7 +128,7 @@ return(kd)
 }
 
 
-## ------------------------------------------------------------------------------------------------------
+## --------------------------------------------------------------------------------------------------------
 key_drivers_data = key_driver_function(data = nps_data_driver, outcome = "nps")
 
 viz_key_driver_function(key_drivers_data)

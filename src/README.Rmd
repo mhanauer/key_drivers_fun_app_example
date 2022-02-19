@@ -1,0 +1,58 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Description: The goal of src is to provide two functions and an application for key drivers using simulated data.  The key_driver_function Rme file contains two functions (1) key_driver_function and (2) viz_key_driver_function.  
+
+Key drivers analysis calculates the importance (e.g., regression coefficients) and percentage positive responses (e.g., number of participants who said Strongly Agree or Agree out of all participants).  With the importance and percentage of positive respones 
+
+The key driver function calculates the key drivers using the rwa packge and has two arguments (1) data and (2) outcome.  The data must be formatted as follows: 
+
+1. Change any Likert Scale responses (e.g., Strongly Agree) to numeric scale with the largest value equaling the most positive value.  For example, change strongly agree to 5 on a five-point Likert scale question.
+
+2. Remove any non-Likert scale variables (e.g., role, binary questions, date, ID).
+
+3. Only include Likert scale questions on a 1 to 5 scale. 
+
+The outcome can be an variable.
+
+Here we load the data simulator and the key_driver function.  We then remove the non-Likert scale variables 
+```{r}
+setwd("~/key_driver_fun_app_example/src")
+source(knitr::purl(glue("~/key_driver_fun_app_example/src/data_generation_a360.Rmd")))
+source(knitr::purl(glue("~/key_driver_fun_app_example/src/key_driver_function.Rmd")))
+
+nps_data_clean = nps_data %>%
+  select(-c(year_quarter, account_names))
+
+nps_data_clean
+```
+Next we run the key driver function with the clean data version.  The outcome variable must be in quotes.
+
+The color is the graphing function 
+```{r}
+nps_driver_data =  key_driver_function(data = nps_data_clean, outcome = "nps")
+nps_driver_data
+```
+If you wanted to analyze an ordinal outcome you would need to remove any continuous outcomes 
+```{r}
+ordinal_nps_data_clean = nps_data %>%
+  select(-c(year_quarter, account_names, nps))
+
+ordinal_nps_driver_data =  key_driver_function(data = nps_data_clean, outcome = "valuable")
+
+
+```
+
+
+
+In that case, don't forget to commit and push the resulting figure files, so they display on GitHub.

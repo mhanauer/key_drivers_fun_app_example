@@ -1,7 +1,7 @@
 library(pacman)
 pacman::p_load(renv, dplyr, shiny, shinydashboard, shinydashboardPlus, tidyverse, glue, plotly, devtools, shinyWidgets, fontawesome, formattable, janitor, tsibble, DT, readr, lubridate, tidymodels, ggrepel)
 
-setwd("~/shiny_360_app_example/src")
+setwd("~/key_driver_fun_app_example/src")
 source(knitr::purl("data_generation_a360.rmd", quiet = TRUE))
 source(knitr::purl("key_driver_function.rmd", quiet = TRUE))
 
