@@ -9,12 +9,10 @@ knitr::opts_chunk$set(echo = TRUE)
 Step: Library packages and load data
 ```{r}
 library(pacman)
-renv::restore()
-pacman::p_load(renv, dplyr, shiny, shinydashboard, shinydashboardPlus, tidyverse, glue, plotly, devtools, shinyWidgets, fontawesome, formattable, janitor, tsibble, DT, readr, lubridate, tidymodels, ggrepel, vip)
+pacman::p_load(renv, dplyr, shiny, shinydashboard, shinydashboardPlus, tidyverse, glue, plotly, devtools, shinyWidgets, fontawesome, formattable, janitor, tsibble, DT, readr, lubridate, tidymodels, ggrepel, vip, rwa)
 
-setwd("/data/data_for_analysis/matthew.hanauer/shiny_360_app_example/src")
-source(knitr::purl(glue("/data/data_for_analysis/matthew.hanauer/shiny_360_app_example/src/data_generation_a360.Rmd")))
-
+setwd("~/shiny_360_app_example/src")
+source(knitr::purl(glue("~/shiny_360_app_example/src/data_generation_a360.Rmd")))
 nps_data
 ```
 Step: Setup the function
@@ -26,9 +24,9 @@ data_out = data %>%
   
  driver_recipe <- recipe(outcome ~ ., data = data_out) %>% 
       ## Can help make the distribution more symmetric                     
-      step_YeoJohnson(all_numeric(), -all_outcomes()) %>% 
+      step_YeoJohnson(all_predictors()) %>% 
       ### Create z-scores for data to reduce collinearity
-      step_normalize(all_numeric(), -all_outcomes()) %>%
+      step_normalize(all_predictors()) %>%
       ## Impute missing values
       step_impute_knn(all_predictors()) %>%
       ## Remove variables with .9 correlation or higher
@@ -36,18 +34,13 @@ data_out = data %>%
       ## Remove all variables with no or near zero variance
       step_nzv(all_predictors())
  
-driver_model <- linear_reg() %>% 
-      set_engine('lm') %>% 
-      set_mode('regression')
+
     
 driver_data_baked <- driver_recipe %>% 
       prep() %>% 
       bake(new_data = data_out)
 
-driver_final_fit <- driver_model %>% 
-      fit(outcome ~ ., data = driver_data_baked)
 
-driver_fit_import = vi_model(driver_final_fit)
 
 driver_fit_import = driver_fit_import %>%
       clean_names() %>% 
@@ -116,8 +109,6 @@ kd <- ggplot(key_drivers_data,aes(importance, positive, label = variable))+
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   labs(x = "Importance", y =  "Favorable") +
   geom_hline(yintercept=median(key_drivers_data$positive))+
-  geom_vline(xintercept=median(key_drivers_data$importance)) +
-  labs(x = "Importance", y =  "Favorable") +
   ggtitle(title) +
   geom_text_repel(data = key_drivers_data %>% filter(color == "red"), aes(label = variable),
                   size = 3.5,  color = "#FF0000") +
