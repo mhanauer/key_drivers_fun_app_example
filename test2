@@ -1,0 +1,173 @@
+---
+title: "key_driver_function"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Step: Library packages and load data
+```{r}
+library(pacman)
+library(dplyr)
+library(tidyverse)
+library(glue)
+library(formattable)
+library(janitor)
+library(tsibble)
+library(DT)
+library(lubridate)
+library(tidymodels)
+library(vip)
+library(rlang)
+library(MASS)
+library(ggrepel)
+
+source(knitr::purl(glue("/data/data_for_analysis/matthew.hanauer/cooker/R/data_generation_key_drivers.Rmd")))
+
+nps_data_driver = nps_data %>%
+  dplyr::select(-c(year_quarter, account_names))
+
+
+nps_data_driver_ordinal = nps_data_driver %>%
+  dplyr::select(-c(nps))
+
+
+```
+Step: Setup the function
+```{r}
+
+key_driver_function = function(data, outcome){
+
+
+data_out = data %>%
+    rename(outcome = outcome)
+  
+ driver_recipe <- recipe(outcome ~ ., data = data_out) %>% 
+      ## Can help make the distribution more symmetric                     
+      step_YeoJohnson(all_predictors()) %>% 
+      ### Create z-scores for data to reduce collinearity
+      step_normalize(all_predictors()) %>%
+      ## Impute missing values
+      step_impute_knn(all_predictors()) %>%
+      ## Remove variables with .9 correlation or higher
+      step_corr(all_predictors(), method = "spearman") %>%
+      ## Remove all variables with no or near zero variance
+      step_nzv(all_predictors())
+ 
+
+    
+driver_data_baked <- driver_recipe %>% 
+      prep() %>% 
+      bake(new_data = data_out)
+
+driver_fit_import = driver_data_baked %>%
+  relocate(outcome) %>%
+  rwa(outcome = "outcome", predictors = c(names(driver_data_baked)[-1]),
+      applysigns = TRUE)
+
+driver_fit_import = driver_fit_import$result %>%
+  clean_names() %>% 
+  mutate(importance = round(sign_rescaled_rel_weight, 2)) %>%
+  rename(variable = variables) %>%
+  dplyr::select(variable, importance)
+
+likert_out =  data_out %>%
+      dplyr::select(-c(outcome)) %>%
+      t() %>%
+      data.frame() %>%
+      mutate(one = rowSums(. == "1")) %>% 
+      mutate(two = rowSums(. == "2")) %>% 
+      mutate(three = rowSums(. == "3")) %>%
+      mutate(four = rowSums(. == "4")) %>%
+      mutate(five = rowSums(. == "5")) %>%
+      dplyr::select(one:five) %>%
+      mutate_all(funs(./dim(data_out)[1])) %>%
+      mutate_all(funs(formattable::percent(., digits = 0))) %>%
+      mutate(positive = four+five) %>%
+      dplyr::select(positive) %>%
+      add_rownames("variable")
+
+key_drivers_data = driver_fit_import %>%
+      left_join(likert_out %>% dplyr::select(variable, positive), by  = "variable")
+     
+key_drivers_data <- key_drivers_data %>%
+      mutate(color = if_else(positive < median(positive) & importance > median(importance), "red", if_else(positive > median(positive) & importance > median(importance), "blue", "grey"))) 
+    ### Rename the variables 
+
+return(key_drivers_data)
+
+}
+
+
+```
+Step: Test out the function
+```{r}
+
+nps_data_driver = nps_data %>%
+  dplyr::select(-c(year_quarter, account_names))
+
+key_driver_function(data = nps_data_driver, outcome = "nps")
+```
+Step: Graph function for key drivers
+```{r}
+
+viz_key_driver_function = function(data){
+
+percent_scaler = 100  
+  
+key_drivers_data = data %>%
+  mutate(importance = importance / percent_scaler, 
+         importance = round(importance, 2))
+  
+x_max = max(key_drivers_data$importance) 
+x_min = min(key_drivers_data$importance) 
+y_max = max(key_drivers_data$positive) 
+y_min = min(key_drivers_data$positive) 
+
+
+title = paste0("Key drivers")
+
+kd <- ggplot(key_drivers_data,aes(importance, positive, label = variable))+
+  geom_point()+
+  ylim(y_min, y_max) +
+  xlim(x_min, x_max) +
+  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+  labs(x = "Importance", y =  "Favorable") +
+  geom_hline(yintercept=median(key_drivers_data$positive))+
+  geom_vline(xintercept=median(key_drivers_data$importance)) +
+  labs(x = "Importance", y =  "Favorable") +
+  ggtitle(title) +
+  geom_text_repel(data = key_drivers_data %>% filter(color == "red"), aes(label = variable),
+                  size = 3.5,  color = "#FF0000") +
+  geom_text_repel(data = key_drivers_data %>% filter(color == "blue"), aes(label = variable),
+                  size = 3.5,  color = "#00B0F0") +
+  geom_text_repel(data = key_drivers_data %>% filter(color == "grey"), aes(label = variable),
+                  size = 3.5,  color = "#808080") +
+  
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_continuous(labels = scales::percent) +
+  coord_flip()
+
+return(kd)
+}
+
+```
+Step: Use both functions
+```{r}
+key_drivers_data = key_driver_function(data = nps_data_driver, outcome = "nps")
+
+viz_key_driver_function(key_drivers_data)
+
+```
+Step: Use both functions
+```{r}
+
+
+key_drivers_data = key_driver_function(data = nps_data_driver_ordinal, outcome = "useful")
+
+
+key_drivers_graph_function(key_drivers_data)
+
+```
