@@ -22,6 +22,9 @@ key_driver_function = function(data, outcome){
 data_out = data %>%
     rename(outcome = outcome)
   
+data_out = data %>%
+    rename(outcome = outcome)
+  
  driver_recipe <- recipe(outcome ~ ., data = data_out) %>% 
       ## Can help make the distribution more symmetric                     
       step_YeoJohnson(all_predictors()) %>% 
@@ -34,20 +37,24 @@ data_out = data %>%
       ## Remove all variables with no or near zero variance
       step_nzv(all_predictors())
  
-
     
 driver_data_baked <- driver_recipe %>% 
       prep() %>% 
       bake(new_data = data_out)
 
+driver_fit_import = driver_data_baked %>%
+  relocate(outcome) %>%
+  rwa(outcome = "outcome", predictors = c(names(driver_data_baked)[-1]),
+      applysigns = TRUE)
 
+driver_fit_import = driver_fit_import$result %>%
+  clean_names() %>% 
+  mutate(importance = round(sign_rescaled_rel_weight, 2)) %>%
+  rename(variable = variables) %>%
+  dplyr::select(variable, importance)
 
-driver_fit_import = driver_fit_import %>%
-      clean_names() %>% 
-      mutate(importance = round(importance, 2))
-
- likert_out =  data_out %>%
-      select(-c(outcome)) %>%
+likert_out =  data_out %>%
+      dplyr::select(-c(outcome)) %>%
       t() %>%
       data.frame() %>%
       mutate(one = rowSums(. == "1")) %>% 
@@ -55,20 +62,18 @@ driver_fit_import = driver_fit_import %>%
       mutate(three = rowSums(. == "3")) %>%
       mutate(four = rowSums(. == "4")) %>%
       mutate(five = rowSums(. == "5")) %>%
-      select(one:five) %>%
+      dplyr::select(one:five) %>%
       mutate_all(funs(./dim(data_out)[1])) %>%
       mutate_all(funs(formattable::percent(., digits = 0))) %>%
       mutate(positive = four+five) %>%
-      select(positive) %>%
+      dplyr::select(positive) %>%
       add_rownames("variable")
 
 key_drivers_data = driver_fit_import %>%
-      select(-c(sign)) %>%
-      left_join(likert_out %>% select(variable, positive), by  = "variable")
+      left_join(likert_out %>% dplyr::select(variable, positive), by  = "variable")
      
 key_drivers_data <- key_drivers_data %>%
-      mutate(color = if_else(positive < mean(positive) & importance > mean(importance), "red", if_else(positive > mean(positive) & importance > mean(importance), "blue", "grey"))) 
-    ### Rename the variables 
+      mutate(color = if_else(positive < median(positive) & importance > median(importance), "red", if_else(positive > median(positive) & importance > median(importance), "blue", "grey"))) 
 
 return(key_drivers_data)
 
@@ -90,13 +95,10 @@ key_drivers_graph_function = function(data){
   
 
 
-max_min_change = .3
-y_adjustment = .1
-
-x_max = max(key_drivers_data$importance) +  max(key_drivers_data$importance)*max_min_change
-x_min = min(key_drivers_data$importance) - min(key_drivers_data$importance)*max_min_change
-y_max = max(key_drivers_data$positive) +  max(key_drivers_data$positive)*max_min_change
-y_min = min(key_drivers_data$positive) - min(key_drivers_data$positive)*max_min_change
+x_max = max(key_drivers_data$importance) 
+x_min = min(key_drivers_data$importance) 
+y_max = max(key_drivers_data$positive) 
+y_min = min(key_drivers_data$positive) 
 
 
 title = paste0("Key drivers")
