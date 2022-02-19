@@ -91,10 +91,14 @@ key_driver_function(data = nps_data_driver, outcome = "nps")
 Step: Graph function for key drivers
 ```{r}
 
-key_drivers_graph_function = function(data){
+viz_key_driver_function = function(data){
+
+percent_scaler = 100  
   
-
-
+key_drivers_data = data %>%
+  mutate(importance = importance / percent_scaler, 
+         importance = round(importance, 2))
+  
 x_max = max(key_drivers_data$importance) 
 x_min = min(key_drivers_data$importance) 
 y_max = max(key_drivers_data$positive) 
@@ -111,6 +115,8 @@ kd <- ggplot(key_drivers_data,aes(importance, positive, label = variable))+
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   labs(x = "Importance", y =  "Favorable") +
   geom_hline(yintercept=median(key_drivers_data$positive))+
+  geom_vline(xintercept=median(key_drivers_data$importance)) +
+  labs(x = "Importance", y =  "Favorable") +
   ggtitle(title) +
   geom_text_repel(data = key_drivers_data %>% filter(color == "red"), aes(label = variable),
                   size = 3.5,  color = "#FF0000") +
@@ -118,16 +124,19 @@ kd <- ggplot(key_drivers_data,aes(importance, positive, label = variable))+
                   size = 3.5,  color = "#00B0F0") +
   geom_text_repel(data = key_drivers_data %>% filter(color == "grey"), aes(label = variable),
                   size = 3.5,  color = "#808080") +
+  
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_continuous(labels = scales::percent) +
   coord_flip()
+
 return(kd)
 }
-
 ```
 Step: Use both functions
 ```{r}
 key_drivers_data = key_driver_function(data = nps_data_driver, outcome = "nps")
 
-key_drivers_graph_function(key_drivers_data)
+viz_key_driver_function(key_drivers_data)
 
 ```
 

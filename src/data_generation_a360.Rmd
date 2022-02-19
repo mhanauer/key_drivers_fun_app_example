@@ -41,6 +41,8 @@ chatter_data
 ```
 Steps: Data generation for key drivers
 ```{r}
+
+set.seed(123)
 nps_low = c(4:10)
 nps_medium = c(7:10)
 nps_high = c(8:10)
