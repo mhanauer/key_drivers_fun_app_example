@@ -72,9 +72,10 @@ ui <- dashboardPage(
             selected = c(unique(chatter_data$year_quarter_chatter))
             )
           )
-        )
-      )
-      ,
+        ), 
+        fluidRow(valueBoxOutput("absolute_chatter"), 
+                 valueBoxOutput("change_chatter"))
+      ),
       tabItem(
         tabName = "app_details",
         fluidRow(
