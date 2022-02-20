@@ -55,7 +55,7 @@ driver_high = c(3:5)
 
 #useful, usable, desireable, findable, credible, valuable
 sampling_rate_driver = 126
-
+set.seed(123)
 driver_function = function(data){
   x = sample(data, size = sampling_rate_driver, replace = TRUE)
 }
@@ -66,8 +66,6 @@ desireable = driver_function(data = driver_high)
 findable = driver_function(data = driver_low)
 credible = driver_function(data = driver_high)
 valuable = driver_function(data = driver_low)
-
-
 
 nps_data = data.frame(year_quarter, account_names, nps, useful, useable, desireable, findable, credible, valuable)
 ```

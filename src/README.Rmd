@@ -11,9 +11,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-Description: The goal of src is to provide two functions and an application for key drivers using simulated data.  The key_driver_function Rme file contains two functions (1) key_driver_function and (2) viz_key_driver_function.  
+Description: The goal of the src is to provide two functions and an application for key drivers using simulated data.  The key_driver_function Rme file contains two functions (1) key_driver_function and (2) viz_key_driver_function.  
 
-Key drivers analysis calculates the importance (e.g., regression coefficients) and percentage positive responses (e.g., number of participants who said Strongly Agree or Agree out of all participants).  With the importance and percentage of positive respones 
+Key drivers analysis calculates the importance (e.g., regression coefficients) and percentage positive responses (e.g., number of participants who said Strongly Agree or Agree out of all participants).  With the importance and percentage of positive responses.
 
 The key driver function calculates the key drivers using the rwa packge and has two arguments (1) data and (2) outcome.  The data must be formatted as follows: 
 
@@ -27,6 +27,7 @@ The outcome can be an variable.
 
 Here we load the data simulator and the key_driver function.  We then remove the non-Likert scale variables 
 ```{r}
+library(glue)
 setwd("~/key_driver_fun_app_example/src")
 source(knitr::purl(glue("~/key_driver_fun_app_example/src/data_generation_a360.Rmd")))
 source(knitr::purl(glue("~/key_driver_fun_app_example/src/key_driver_function.Rmd")))
@@ -34,7 +35,7 @@ source(knitr::purl(glue("~/key_driver_fun_app_example/src/key_driver_function.Rm
 nps_data_clean = nps_data %>%
   select(-c(year_quarter, account_names))
 
-nps_data_clean
+head(nps_data_clean)
 ```
 Next we run the key driver function with the clean data version.  The outcome variable must be in quotes.
 
@@ -43,16 +44,21 @@ The color is the graphing function
 nps_driver_data =  key_driver_function(data = nps_data_clean, outcome = "nps")
 nps_driver_data
 ```
-If you wanted to analyze an ordinal outcome you would need to remove any continuous outcomes 
+If you wanted to analyze an ordinal outcome you would need to remove any continuous outcomes and run the function with the variable you want.
 ```{r}
 ordinal_nps_data_clean = nps_data %>%
   select(-c(year_quarter, account_names, nps))
 
 ordinal_nps_driver_data =  key_driver_function(data = nps_data_clean, outcome = "valuable")
 
+ordinal_nps_driver_data
+```
+Then you can use the viz function to product the key drivers graph.  In the top left corner are the improvement opportunities.  Those are drivers above the median in importance, but below to median in favorability.  In the top right are the key strengths which are drivers above the median in both importance and favorability.  In the lower right corner are the drivers below the median importance and favorability.  Finally in the lower right corner are the drivers below the median on importance, but above the median on favorability.
+```{r}
+key_drivers_data = key_driver_function(data = nps_data_driver, outcome = "nps")
 
+viz_key_driver_function(key_drivers_data)
 ```
 
 
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub.
