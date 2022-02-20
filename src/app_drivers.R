@@ -13,7 +13,8 @@ ui <- dashboardPage(
   dashboardHeader(title = "Demo Key Drivers and KPIs"),
   dashboardSidebar(sidebarMenu(
     menuItem("Key Drivers", tabName = "key_drivers"),
-    menuItem("KPIs", tabName = "kpis")
+    menuItem("KPIs", tabName = "kpis"),
+    menuItem("App details", tabName = "app_details")
   )),
   dashboardBody(
     tabItems(
@@ -43,6 +44,43 @@ ui <- dashboardPage(
         fluidRow(
           plotOutput("key_drivers")
         )
+      ), 
+      tabItem(
+        tabName = "kpis", 
+        fluidRow(
+          column(
+          3,
+          pickerInput(
+            inputId = "account_names_chatter",
+            label = "Account name",
+            # placeholder is enabled when 1st choice is an empty string
+            choices = c(unique(chatter_data$account_names_chatter)),
+            multiple = TRUE,
+            options = list(`actions-box` = TRUE),
+            selected = c(unique(chatter_data$account_names_chatter))
+          )
+        ),
+        column(
+          3,
+          pickerInput(
+            inputId = "year_quarter_chatter",
+            label = "Year quarter",
+            # placeholder is enabled when 1st choice is an empty string
+            choices = c(unique(chatter_data$year_quarter_chatter)),
+            multiple = TRUE,
+            options = list(`actions-box` = TRUE),
+            selected = c(unique(chatter_data$year_quarter_chatter))
+            )
+          )
+        )
+      )
+      ,
+      tabItem(
+        tabName = "app_details",
+        fluidRow(
+          box(strong("Please see key driver function on github for more details: https://github.com/mhanauer/key_drivers_fun_app_example")
+          )
+        )
       )
     )
   )
@@ -57,7 +95,8 @@ server <- function(input, output) {
     key_drivers_data <- key_driver_function(data = nps_data, outcome = "nps")
 
     viz_key_driver_function(key_drivers_data)
-  })
+    }
+  )
 }
 
 shinyApp(ui, server)

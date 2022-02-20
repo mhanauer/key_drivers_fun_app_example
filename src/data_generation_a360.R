@@ -1,13 +1,13 @@
-## ----setup, include=FALSE---------------------------------------------------------------------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 
 
-## ---------------------------------------------------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------
 library(pacman)
 pacman::p_load(renv, dplyr, shiny, shinydashboard, shinydashboardPlus, tidyverse, glue, plotly, devtools, shinyWidgets, fontawesome, formattable, janitor, tsibble, DT, readr, lubridate, tidymodels, ggrepel)
 
 
-## ---------------------------------------------------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------
 chatter_low = seq(from = -.5, to = -.2, by = .01)
 chatter_medium = seq(from = -.2, to = .2, by = .01)
 chatter_high = seq(from = .2, to = .5, by = .01)
@@ -26,13 +26,13 @@ year_quarter = data.frame(year_quarter = seq(as.Date("2020/1/1"), as.Date("2022/
 
 year_quarter = rep(year_quarter$year_quarter, times = 14)
 
-account_year = data.frame(account_names = account_names, year_quarter = year_quarter)
+account_year = data.frame(account_names_chatter = account_names, year_quarter_chatter = as.character(year_quarter))
 
 chatter_data = data.frame(account_year, chatter_data = chatter_data)
 chatter_data
 
 
-## ---------------------------------------------------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------
 
 set.seed(123)
 nps_low = c(4:10)
@@ -47,7 +47,7 @@ driver_high = c(3:5)
 
 #useful, usable, desireable, findable, credible, valuable
 sampling_rate_driver = 126
-
+set.seed(123)
 driver_function = function(data){
   x = sample(data, size = sampling_rate_driver, replace = TRUE)
 }
@@ -58,8 +58,6 @@ desireable = driver_function(data = driver_high)
 findable = driver_function(data = driver_low)
 credible = driver_function(data = driver_high)
 valuable = driver_function(data = driver_low)
-
-
 
 nps_data = data.frame(year_quarter, account_names, nps, useful, useable, desireable, findable, credible, valuable)
 

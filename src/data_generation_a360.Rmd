@@ -34,7 +34,7 @@ year_quarter = data.frame(year_quarter = seq(as.Date("2020/1/1"), as.Date("2022/
 
 year_quarter = rep(year_quarter$year_quarter, times = 14)
 
-account_year = data.frame(account_names = account_names, year_quarter = year_quarter)
+account_year = data.frame(account_names_chatter = account_names, year_quarter_chatter = as.character(year_quarter))
 
 chatter_data = data.frame(account_year, chatter_data = chatter_data)
 chatter_data
