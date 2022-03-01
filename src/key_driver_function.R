@@ -13,10 +13,7 @@ nps_data
 
 ## --------------------------------------------------------------------------------------------------------
 key_driver_function = function(data, outcome){
-  
-data_out = data %>%
-    rename(outcome = outcome)
-  
+
 data_out = data %>%
     rename(outcome = outcome)
   
