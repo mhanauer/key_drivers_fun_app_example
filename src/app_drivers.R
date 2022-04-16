@@ -1,8 +1,8 @@
 library(pacman)
 pacman::p_load(renv, dplyr, shiny, shinydashboard, shinydashboardPlus, tidyverse, glue, plotly, devtools, shinyWidgets, fontawesome, formattable, janitor, tsibble, DT, readr, lubridate, tidymodels, ggrepel)
 
-source(knitr::purl("data_generation_a360.rmd", quiet = TRUE))
-source(knitr::purl("key_driver_function.rmd", quiet = TRUE))
+source(knitr::purl(glue("data_generation_a360.Rmd")))
+source(knitr::purl(glue("key_driver_function.Rmd")))
 
 
 nps_data <- nps_data %>%
