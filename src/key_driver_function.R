@@ -6,15 +6,16 @@ knitr::opts_chunk$set(echo = TRUE)
 library(pacman)
 pacman::p_load(renv, dplyr, shiny, shinydashboard, shinydashboardPlus, tidyverse, glue, plotly, devtools, shinyWidgets, fontawesome, formattable, janitor, tsibble, DT, readr, lubridate, tidymodels, ggrepel, vip, rwa, glue)
 
-
-setwd("~/key_driver_fun_app_example/src")
-source(knitr::purl(glue("~/key_driver_fun_app_example/src/data_generation_a360.Rmd")))
+source(knitr::purl(glue("data_generation_a360.Rmd")))
 nps_data
 
 
 ## --------------------------------------------------------------------------------------------------------------------------
 key_driver_function = function(data, outcome){
-
+  
+data_out = data %>%
+    rename(outcome = outcome)
+  
 data_out = data %>%
     rename(outcome = outcome)
   
