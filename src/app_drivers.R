@@ -9,7 +9,7 @@ nps_data <- nps_data %>%
   mutate(year_quarter = as.character(year_quarter))
 
 ui <- dashboardPage(
-  dashboardHeader(title = "Demo Key Drivers and KPIs"),
+  dashboardHeader(title = "Demo Key Drivers"),
   dashboardSidebar(sidebarMenu(
     menuItem("Key Drivers", tabName = "key_drivers")
   )),
