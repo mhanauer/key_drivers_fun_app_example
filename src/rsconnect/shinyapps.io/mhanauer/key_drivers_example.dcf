@@ -1,0 +1,13 @@
+name: key_drivers_example
+title:
+username:
+account: mhanauer
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6127113
+bundleId: 5835991
+url: https://mhanauer.shinyapps.io/key_drivers_example/
+when: 1650920819.7617
+lastSyncTime: 1650920819.76171
+asMultiple: FALSE
+asStatic: FALSE
