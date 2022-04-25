@@ -1,5 +1,4 @@
 install.packages('shiny', repos='http://cran.rstudio.com/')
-renv::snapshot()
 library(pacman)
 pacman::p_load(renv, dplyr, shiny, shinydashboard, shinydashboardPlus, tidyverse, glue, plotly, devtools, shinyWidgets, fontawesome, formattable, janitor, tsibble, DT, readr, lubridate, tidymodels, ggrepel)
 
